@@ -51,7 +51,7 @@ library SafeMath {
  * @dev Implementation of the basic standard token.
  * @dev https://github.com/ethereum/EIPs/issues/20
  */
-contract KvantorToken is ERC20 {
+contract KvantorToken {
     using SafeMath for uint256;
 
     string public name = "KVANTOR";
@@ -64,7 +64,10 @@ contract KvantorToken is ERC20 {
     uint256 internal totalSupply_;
     mapping(address => uint256) internal balances;
 
-    function KvantorToken() public returns() {
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    function KvantorToken() public {
         totalSupply_ = 10000000000000000;
         balances[msg.sender] = totalSupply_;
         owner = msg.sender;
@@ -86,20 +89,20 @@ contract KvantorToken is ERC20 {
         return balances[_owner];
     }
 
-        /**
-   * @dev Check is certain transer allowed
-   * main rule is "all transfers is prohibited till 27.09.2018 00:00:00 UTC+3
-   * The only exceptional rule -"KVANTOR smartcontract creator's account is allowed to transfer token to buyers' account at anytime"
-   */
-  function isTransferAllowed(address sender) constant returns (bool) {
-    if(sender == owner)
-    return true;
-    // 27.09.2018 00:00:00 UTC+3 = 1537995600 timestamp
-    if(now > 1537995599)
+          /**
+    * @dev Check is certain transer allowed
+    * main rule is "all transfers is prohibited till 27.09.2018 00:00:00 UTC+3
+    * The only exceptional rule -"KVANTOR smartcontract creator's account is allowed to transfer token to buyers' account at anytime"
+    */
+    function isTransferAllowed(address sender) public constant returns (bool) {
+      if(sender == owner)
       return true;
-    else
-     return false;
-  }
+      // 27.09.2018 00:00:00 UTC+3 = 1537995600 timestamp
+      if(now > 1537995599)
+        return true;
+      else
+      return false;
+    }
 
     /**
     * @dev transfer token for a specified address
